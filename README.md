@@ -10,12 +10,22 @@ The main ideas behind this tool:
 * Generate a featured image
 * Upload the post to your Wordpress
 
-I suggest setting the following variables in a `.env` file. You can also set system environment variables.
+The following environment variables must be set. I suggest using a `.env` file. You can also set system environment variables.
 
 * OPENAI_API_KEY
-* STABILITY_API_KEY
+* STABILITY_API_KEY (optional, only if you want to generate images. See "Usage" below.)
 * WORDPRESS_USERNAME
 * WORDPRESS_PASSWORD
 * WORDPRESS_URL
 
 This project is still in early development and the prompts need refinement. The ultimate goal is to produce content with high-quality SEO.
+
+## Usage
+
+CAUTION: This will generate multiple posts and can get expensive. You might also hit rate limiting problems.
+
+Basic usage:
+`python3 main.py --topic menswear`
+
+If you would like to include a featured image on the post, use the `-i/--image` flag:
+`python3 main.py -i --topic menswear`
