@@ -7,9 +7,6 @@ import pandas as pd
 import logging
 import argparse
 
-# TODO - Use Wordpress API to get slugs, use those as internal links
-# TODO - An additional OpenAI API prompt to generate topic ideas and output those to the csv. Include existing slugs so we don't get duplicates.
-
 logger = logging.getLogger(__name__)
 loglevel = logging.INFO
 
