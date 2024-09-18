@@ -15,7 +15,7 @@ parser = argparse.ArgumentParser(
                     description='Use the OpenAI, Stability, and Wordpress APIs to generate and upload posts.')
 parser.add_argument('-i', '--image',
                     action='store_true')
-parser.add_argument('-t', '--topic')
+parser.add_argument('-t', '--topic', required=True)
 args = parser.parse_args()
 load_dotenv()
 
