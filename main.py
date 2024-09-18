@@ -15,6 +15,7 @@ parser = argparse.ArgumentParser(
                     description='Use the OpenAI, Stability, and Wordpress APIs to generate and upload posts.')
 parser.add_argument('-i', '--image',
                     action='store_true')
+parser.add_argument('-t', '--topic')
 args = parser.parse_args()
 load_dotenv()
 
@@ -25,7 +26,7 @@ WORDPRESS_USERNAME = os.environ.get("WORDPRESS_USERNAME")
 WORDPRESS_PASSWORD = os.environ.get("WORDPRESS_PASSWORD")
 WORDPRESS_URL = os.environ.get("WORDPRESS_URL")
 
-topic = "Dungeons and Dragons"
+topic = args.topic
 input_file = "input.csv"
 output_file = "output.csv"
 
@@ -52,7 +53,7 @@ def generate_article_ideas(client: OpenAI, topic: str) -> str:
   conversation = [
     {
       "role": "user",
-      "content": f"You need to create content to drive traffic to an online blog about {topic}. Suggest some trending topics or popular themes in {topic} to use as pillar content. These will become Wordpress blog posts. Along with each suggestion, include a URL slug and brief description of the content. Never generate any URL slugs identical to any in this list: {url_slugs}. Format your response in a CSV format. Do not include a csv header or quotes. For example, the first two line should look like: \nURL Slug,Title,Description of Page\nhow-to-dm,Beginner Dungeon Master Guide,A guide to help new Dungeon Masters get up to speed.",
+      "content": f"You need to create content to drive traffic to an online blog about {topic}. Suggest some trending topics or popular themes in {topic} to use as pillar content. These will become Wordpress blog posts. Along with each suggestion, include a URL slug and brief description of the content. Never generate any URL slugs identical to any in this list: {url_slugs}. Format your response in a CSV format. Do not include a csv header or quotes. For example, the first two line should look like: \nURL Slug,Title,Description of Page\nsuit-colors,A summary of all the important suit colors for men,All the suit colors for men",
     },
   ]
   response = client.chat.completions.create(
@@ -101,7 +102,7 @@ def generate_blog_post(client: OpenAI, outline: str) -> str:
   )
   return response.choices[0].message.content
 
-def generate_featured_image(stability_api_key: str, prompt: str):
+def generate_featured_image(stability_api_key: str, topic: str):
     STABILITY_API_KEY = stability_api_key
     api_host = 'https://api.stability.ai'
     engine_id = 'core'
@@ -113,7 +114,7 @@ def generate_featured_image(stability_api_key: str, prompt: str):
         },
         files={"none": ''},
         data={
-          "prompt": f"a (dungeons and dragons) campaign, for use as a featured image on a wordpress article, in the style of a painting or drawing",
+          "prompt": f"(an image representing {topic}), image for use as a featured image on a wordpress article",
           "output_format": "png",
         },
     )
@@ -235,7 +236,7 @@ def main():
     # Step 4: Generate a featured image for the article
     if (args.image):
       logger.info(f"Generating image: {article_title}")
-      generated_image = generate_featured_image(STABILITY_API_KEY, f"{article_title}")
+      generated_image = generate_featured_image(STABILITY_API_KEY, f"{args.topic}")
 
     # Save outputs
     blog_content = blog_string
