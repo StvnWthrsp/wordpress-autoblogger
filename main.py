@@ -53,7 +53,7 @@ def generate_article_ideas(client: OpenAI, topic: str) -> str:
   conversation = [
     {
       "role": "user",
-      "content": f"You need to create content to drive traffic to an online blog about {topic}. Suggest some trending topics or popular themes in {topic} to use as pillar content. These will become Wordpress blog posts. Along with each suggestion, include a URL slug and brief description of the content. Never generate any URL slugs identical to any in this list: {url_slugs}. Format your response in a CSV format. Do not include a csv header or quotes. For example, the first two line should look like: \nURL Slug,Title,Description of Page\nsuit-colors,A summary of all the important suit colors for men,All the suit colors for men",
+      "content": f"You need to create content to drive traffic to an online blog about {topic}. Suggest 15 trending topics or popular themes in {topic} to use as pillar content. These will become Wordpress blog posts. Along with each suggestion, include a URL slug and brief description of the content. Never use a comma in the description. Never generate any URL slugs identical to any in this list: {url_slugs}. Format your response in a CSV format. Do not include a csv header or quotes. For example, the first two line should look like: \nURL Slug,Title,Description of Page\nsuit-colors,A summary of all the important suit colors for men,All the suit colors for men",
     },
   ]
   response = client.chat.completions.create(
@@ -83,7 +83,7 @@ def generate_blog_outline(client: OpenAI, article_title: str) -> str:
 
 def generate_blog_post(client: OpenAI, outline: str) -> str:
   url_slugs = get_post_slugs(WORDPRESS_URL, WORDPRESS_USERNAME, WORDPRESS_PASSWORD)
-  formatted_links = format_internal_links(url_slugs)
+  internal_links = format_internal_links(url_slugs)
   conversation = [
     {
       "role": "system",
@@ -228,7 +228,7 @@ def main():
 
     # Step 3: Generate a blog post based on the article outline
     logger.info(f"Generating full article: {article_title}")
-    blog_string = generate_blog_post(client, outline_string, internal_links)
+    blog_string = generate_blog_post(client, outline_string)
     logger.info(f"Writing article to file: {article_title}")
     with open(f"blogpost_{article_title.replace(' ', '_').replace('/', '_')}.txt", "w") as blog_text:
       blog_text.write(blog_string)
